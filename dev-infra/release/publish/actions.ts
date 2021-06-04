@@ -12,9 +12,10 @@ import {join} from 'path';
 import * as semver from 'semver';
 
 import {debug, error, green, info, promptConfirm, red, warn, yellow} from '../../utils/console';
+import {AuthenticatedGitClient} from '../../utils/git/authenticated-git-client';
 import {getListCommitsInBranchUrl, getRepositoryGitUrl} from '../../utils/git/github-urls';
-import {GitClient} from '../../utils/git/index';
 import {BuiltPackage, ReleaseConfig} from '../config/index';
+import {ReleaseNotes} from '../notes/release-notes';
 import {NpmDistTag} from '../versioning';
 import {ActiveReleaseTrains} from '../versioning/active-release-trains';
 import {runNpmPublish} from '../versioning/npm-publish';
@@ -25,7 +26,6 @@ import {changelogPath, packageJsonPath, waitForPullRequestInterval} from './cons
 import {invokeReleaseBuildCommand, invokeYarnInstallCommand} from './external-commands';
 import {findOwnedForksOfRepoQuery} from './graphql-queries';
 import {getPullRequestState} from './pull-request-state';
-import {getLocalChangelogFilePath, ReleaseNotes} from './release-notes/release-notes';
 
 /** Interface describing a Github repository. */
 export interface GithubRepo {
@@ -50,7 +50,7 @@ export interface ReleaseActionConstructor<T extends ReleaseAction = ReleaseActio
   /** Whether the release action is currently active. */
   isActive(active: ActiveReleaseTrains, config: ReleaseConfig): Promise<boolean>;
   /** Constructs a release action. */
-  new(...args: [ActiveReleaseTrains, GitClient<true>, ReleaseConfig, string]): T;
+  new(...args: [ActiveReleaseTrains, AuthenticatedGitClient, ReleaseConfig, string]): T;
 }
 
 /**
@@ -77,7 +77,7 @@ export abstract class ReleaseAction {
   private _cachedForkRepo: GithubRepo|null = null;
 
   constructor(
-      protected active: ActiveReleaseTrains, protected git: GitClient<true>,
+      protected active: ActiveReleaseTrains, protected git: AuthenticatedGitClient,
       protected config: ReleaseConfig, protected projectDir: string) {}
 
   /** Updates the version in the project top-level `package.json` file. */
@@ -320,7 +320,7 @@ export abstract class ReleaseAction {
    * @returns A boolean indicating whether the release notes have been prepended.
    */
   protected async prependReleaseNotesToChangelog(releaseNotes: ReleaseNotes): Promise<void> {
-    const localChangelogPath = getLocalChangelogFilePath(this.projectDir);
+    const localChangelogPath = join(this.projectDir, changelogPath);
     const localChangelog = await fs.readFile(localChangelogPath, 'utf8');
     const releaseNotesEntry = await releaseNotes.getChangelogEntry();
     await fs.writeFile(localChangelogPath, `${releaseNotesEntry}\n\n${localChangelog}`);

@@ -4,11 +4,11 @@ This topic demonstrates how to create a structural directive and provides concep
 
 <div class="alert is-helpful">
 
-For the example app that this page describes, see the <live-example></live-example>.
+For the example application that this page describes, see the <live-example></live-example>.
 
 </div>
 
-For more information on Angular's built-in structural directives, such as `NgIf`, `NgFor`, and `NgSwitch`, see [Built-in directives](guide/built-in-directives).
+For more information on Angular's built-in structural directives, such as `NgIf`, `NgForOf`, and `NgSwitch`, see [Built-in directives](guide/built-in-directives).
 
 {@a unless}
 

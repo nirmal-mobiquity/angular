@@ -31,6 +31,14 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "webWorkerTsConfig": "tsconfig.worker.json",
+            "optimization": {
+              "fonts": true,
+              "scripts": true,
+              "styles": {
+                "inlineCritical": false,
+                "minify": true
+              }
+            },
             "outputHashing": "all",
             "sourceMap": true,
             "namedChunks": true,
@@ -41,7 +49,17 @@
               "src/google385281288605d160.html"
             ],
             "styles": [
-              "src/styles/main.scss"
+              "src/styles/main.scss",
+              {
+                "inject": false,
+                "input": "src/styles/custom-themes/dark-theme.scss",
+                "bundleName": "dark-theme"
+              },
+              {
+                "inject": false,
+                "input": "src/styles/custom-themes/light-theme.scss",
+                "bundleName": "light-theme"
+              }
             ],
             "scripts": [],
             "budgets": [

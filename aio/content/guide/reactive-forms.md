@@ -32,7 +32,7 @@ Template-driven forms allow direct access to modify data in your template, but a
 
 There are three steps to using form controls.
 
-1. Register the reactive forms module in your app. This module declares the reactive-form directives that you need to use reactive forms.
+1. Register the reactive forms module in your application. This module declares the reactive-form directives that you need to use reactive forms.
 2. Generate a new `FormControl` instance and save it in the component.
 3. Register the `FormControl` in the template.
 
@@ -378,16 +378,6 @@ In the `ProfileEditor` component, add the `Validators.required` static method as
 <code-example path="reactive-forms/src/app/profile-editor/profile-editor.component.ts" region="required-validator" header="src/app/profile-editor/profile-editor.component.ts (required validator)">
 
 </code-example>
-
-HTML5 has a set of built-in attributes that you can use for native validation, including `required`, `minlength`, and `maxlength`. You can take advantage of these optional attributes on your form input elements. Add the `required` attribute to the `firstName` input element.
-
-<code-example path="reactive-forms/src/app/profile-editor/profile-editor.component.html" region="required-attribute" header="src/app/profile-editor/profile-editor.component.html (required attribute)"></code-example>
-
-<div class="alert is-important">
-
-**Caution:** Use these HTML5 validation attributes *in combination with* the built-in validators provided by Angular's reactive forms. Using these in combination prevents errors when the expression is changed after the template has been checked.
-
-</div>
 
 **Display form status**
 

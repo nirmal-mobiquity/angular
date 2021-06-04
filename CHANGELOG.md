@@ -1,3 +1,95 @@
+<a name="12.1.0-next.4"></a>
+# 12.1.0-next.4 (2021-06-02)
+### compiler-cli
+| Commit | Description |
+| -- | -- |
+| e039075a28 | fix(compiler-cli): better detect classes that are indirectly exported (#42207) |
+## Special Thanks:
+AleksanderBodurri, Alex Rickabaugh, Andrew Kushnir, Andrew Scott, David Pfeiffer, David Shevitz, Doug Parker, Dylan Hunn, George Kalpakas, Igor Minar, Joey Perrott, JoostK, Kristiyan Kostadinov, Renovate Bot, Sam Severance, Serguei Cambour, Suguru Inatomi, Teri Glover, Wagner Maciel, Zach Arend, mgechev and 不肖・高橋
+
+
+<a name="12.0.3"></a>
+# 12.0.3 (2021-06-02)
+### compiler-cli
+| Commit | Description |
+| -- | -- |
+| 8bdcca1e08 | fix(compiler-cli): better detect classes that are indirectly exported (#42207) |
+## Special Thanks:
+AleksanderBodurri, Alex Rickabaugh, Andrew Kushnir, Andrew Scott, David Pfeiffer, David Shevitz, Doug Parker, Dylan Hunn, George Kalpakas, Igor Minar, Joey Perrott, JoostK, Kristiyan Kostadinov, Sam Severance, Serguei Cambour, Suguru Inatomi, Teri Glover, Wagner Maciel, Zach Arend, mgechev and 不肖・高橋
+
+
+<a name="12.0.2"></a>
+# 12.0.2 (2021-05-26)
+### forms
+| Commit | Description |
+| -- | -- |
+| 19d7bf4162 | fix(forms): Add float number support for min and max validator (#42223) |
+### migrations
+| Commit | Description |
+| -- | -- |
+| 11c7bec065 | fix(migrations): add migration to replace `/deep/` with `::ng-deep` (#42214) |
+### platform-browser
+| Commit | Description |
+| -- | -- |
+| 84ab81c286 | fix(platform-browser): update started state on reset (#41608) |
+## Special Thanks:
+Alan Agius, Andrew Scott, David Shevitz, George Kalpakas, Igor Minar, Joey Perrott, Kapunahele Wong, Madleina Scheidegger, Paul Gschwendtner, Pete Bacon Darwin, Sam Severance, Teri Glover, Zach Arend, chenyunhsin, iRealNirmal, mgechev and twerske
+
+<a name="12.1.0-next.3"></a>
+# 12.1.0-next.3 (2021-05-26)
+### forms
+| Commit | Description |
+| -- | -- |
+| 3d9062dad7 | fix(forms): Add float number support for min and max validator (#42223) |
+### migrations
+| Commit | Description |
+| -- | -- |
+| 7f6213a2f4 | fix(migrations): add migration to replace `/deep/` with `::ng-deep` (#42214) |
+### platform-browser
+| Commit | Description |
+| -- | -- |
+| 3a6af8e629 | fix(platform-browser): update started state on reset (#41608) |
+## Special Thanks:
+Alan Agius, Andrew Scott, David Shevitz, George Kalpakas, Igor Minar, Joey Perrott, Kapunahele Wong, Madleina Scheidegger, Paul Gschwendtner, Pete Bacon Darwin, Renovate Bot, Sam Severance, Teri Glover, Zach Arend, chenyunhsin, iRealNirmal, mgechev and twerske
+
+
+<a name="12.1.0-next.2"></a>
+# 12.1.0-next.2 (2021-05-19)
+### common
+| Commit | Description |
+| -- | -- |
+| 4bc3cf216d | feat(common): add URLSearchParams to request body (#37852) |
+### language-service
+| Commit | Description |
+| -- | -- |
+| 1be5d659a5 | fix(language-service): fully de-duplicate reference and rename results (#40523) |
+| a86ca4fe04 | feat(language-service): Enable renaming of pipes (#40523) |
+## Special Thanks:
+Ajit Singh, Alan Agius, Alan Cohen, Alex Rickabaugh, Amadou Sall, Andrew J Asche, Andrew Kushnir, Andrew Scott, Aristeidis Bampakos, Ben Lesh, Bendik Skarpnes, Benjamin Kindle, Charles Lyding, Chau Tran, Cosmin Ababei, Daniel Díaz, David Shevitz, Dharmen Shah, Dmitrij Kuba, Dylan Hunn, Eduard Bondarenko, Emily Wenberg, Front-end developer, George Kalpakas, Georgii Dolzhykov, Gopal Jayaraman, Gourav102, Gérôme Grignon, Hugo Mejia, Igor Minar, Jesse Palmer, Jessica Janiuk, JiaLiPassion, Joey Perrott, JoostK, Julien Marcou, Kapunahele Wong, Keen Yee Liau, Kirk Larkin, Kristiyan Kostadinov, Lars Gyrup Brink Nielsen, Martin Sikora, Mathias Schäfer, Michael Hladky, Mikhail, Misko Hevery, MrJithil, Nishu Goel, Oluwole Majiyagbe, Paul Gschwendtner, Paul Muriel Biya-Bi, Pete Bacon Darwin, Pierre Portejoie, Richard Sithole, Sagar Pandita, Sam Severance, Sumit Arora, Talha Azhar, Teri Glover, Wojciech Okoński, Zach Arend, Zack DeRose, aschaap, cexbrayat, iRealNirmal, iron, jeripeierSBB, mgechev, nirmal bhagwani, pavlenko, profanis, rachid Oussanaa, sovtara, unknown, va-stefanek and wagnermaciel
+
+
+<a name="12.0.1"></a>
+# 12.0.1 (2021-05-19)
+### benchpress
+| Commit | Description |
+| -- | -- |
+| 28ee9864a4 | fix(benchpress): update the check for start and end events (#42085) |
+### compiler
+| Commit | Description |
+| -- | -- |
+| 52c07e403e | fix(compiler): unclear lexer error when using private identifier in expressions (#42027) |
+### core
+| Commit | Description |
+| -- | -- |
+| 3a46ad96ea | fix(core): global listeners not being bound on non-node host elements (#42014) |
+### forms
+| Commit | Description |
+| -- | -- |
+| 9b90c03a9f | fix(forms): registerOnValidatorChange should be called for ngModelGroup. (#41971) |
+## Special Thanks:
+Alex Rickabaugh, Daniel Díaz, David Shevitz, Dylan Hunn, Front-end developer, George Kalpakas, Joey Perrott, Kristiyan Kostadinov, Lars Gyrup Brink Nielsen, MrJithil, Paul Gschwendtner, Renovate Bot, Sam Severance, Sumit Arora, iRealNirmal, iron, mgechev, rachid Oussanaa and wagnermaciel
+
+
 <a name="12.0.0"></a>
 # 12.0.0 (2021-05-12)
 

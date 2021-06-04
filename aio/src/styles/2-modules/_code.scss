@@ -1,3 +1,7 @@
+@use 'sass:color';
+@use '../constants';
+@use '../mixins';
+
 code-example,
 code-tabs {
   clear: both;
@@ -49,7 +53,7 @@ code-example {
     background-color: $accentblue;
     border-radius: 5px 5px 0 0;
     color: $offwhite;
-    @include font-size(16);
+    @include mixins.font-size(16);
     padding: 8px 16px;
   }
 }
@@ -107,21 +111,21 @@ aio-code {
       }
 
       span {
-        @include line-height(24);
+        @include mixins.line-height(24);
       }
 
       ol.linenums {
         margin: 0;
-        color: lighten($mediumgray, 25%);
+        color: color.adjust($mediumgray, $lightness: 25%);
 
         li {
           margin: 0;
           font-family: $code-font;
           font-size: 90%;
-          @include line-height(24);
+          @include mixins.line-height(24);
 
           &::marker {
-            color: lighten($mediumgray, 25%);
+            color: color.adjust($mediumgray, $lightness: 25%);
           }
         }
       }
@@ -171,7 +175,7 @@ aio-code {
 
   :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(pre) {
     > code {
-      background-color: rgba($lightgray, 0.5);
+      background-color: rgba($lightgray, 0.3);
       border-radius: 4px;
       color: $deepgray;
       padding: 0 4px;

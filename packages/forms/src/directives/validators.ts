@@ -10,7 +10,7 @@ import {Directive, forwardRef, Input, OnChanges, SimpleChanges, StaticProvider} 
 import {Observable} from 'rxjs';
 
 import {AbstractControl} from '../model';
-import {emailValidator, maxLengthValidator, maxValidator, minLengthValidator, minValidator, NG_VALIDATORS, nullValidator, patternValidator, requiredTrueValidator, requiredValidator} from '../validators';
+import {emailValidator, maxLengthValidator, maxValidator, minLengthValidator, toInteger, minValidator, NG_VALIDATORS, nullValidator, patternValidator, requiredTrueValidator, requiredValidator} from '../validators';
 
 
 /**
@@ -541,6 +541,8 @@ export const MIN_LENGTH_VALIDATOR: any = {
   selector: '[minlength][formControlName],[minlength][formControl],[minlength][ngModel]',
   providers: [MIN_LENGTH_VALIDATOR],
   host: {'[attr.minlength]': 'minlength ? minlength : null'}
+  // if `this.minlength` is falsy (including "", 0 and null) this attribute is not added to the
+  // DOM element
 })
 export class MinLengthValidator implements Validator, OnChanges {
   private _validator: ValidatorFn = nullValidator;
@@ -551,7 +553,7 @@ export class MinLengthValidator implements Validator, OnChanges {
    * Tracks changes to the minimum length bound to this directive.
    */
   @Input()
-  minlength!: string|number;  // This input is always defined, since the name matches selector.
+  minlength!: string|number|null;  // This input is always defined, since the name matches selector.
 
   /** @nodoc */
   ngOnChanges(changes: SimpleChanges): void {
@@ -579,8 +581,8 @@ export class MinLengthValidator implements Validator, OnChanges {
   }
 
   private _createValidator(): void {
-    this._validator = minLengthValidator(
-        typeof this.minlength === 'number' ? this.minlength : parseInt(this.minlength, 10));
+    const minlength = this.minlength;
+    this._validator = minlength ? minLengthValidator(toInteger(minlength.toString())) : nullValidator;
   }
 }
 
@@ -619,6 +621,8 @@ export const MAX_LENGTH_VALIDATOR: any = {
   selector: '[maxlength][formControlName],[maxlength][formControl],[maxlength][ngModel]',
   providers: [MAX_LENGTH_VALIDATOR],
   host: {'[attr.maxlength]': 'maxlength ? maxlength : null'}
+  // if `this.maxlength` is falsy (including "", 0 and null) this attribute is not added to the
+  // DOM element
 })
 export class MaxLengthValidator implements Validator, OnChanges {
   private _validator: ValidatorFn = nullValidator;
@@ -629,7 +633,7 @@ export class MaxLengthValidator implements Validator, OnChanges {
    * Tracks changes to the maximum length bound to this directive.
    */
   @Input()
-  maxlength!: string|number;  // This input is always defined, since the name matches selector.
+  maxlength!: string|number|null;  // This input is always defined, since the name matches selector.
 
   /** @nodoc */
   ngOnChanges(changes: SimpleChanges): void {
@@ -656,8 +660,8 @@ export class MaxLengthValidator implements Validator, OnChanges {
   }
 
   private _createValidator(): void {
-    this._validator = maxLengthValidator(
-        typeof this.maxlength === 'number' ? this.maxlength : parseInt(this.maxlength, 10));
+    const maxlength = this.maxlength;
+    this._validator = maxlength ? maxLengthValidator(toInteger(maxlength.toString())) : nullValidator;
   }
 }
 

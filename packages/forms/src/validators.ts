@@ -499,6 +499,10 @@ export function maxLengthValidator(maxLength: number): ValidatorFn {
   };
 }
 
+export function toInteger(digit: string, parseType?: string): number {
+  return parseType === 'float' ? parseFloat(digit) : parseInt(digit, 10);
+}
+
 /**
  * Validator that requires the control's value to match a regex pattern.
  * See `Validators.pattern` for additional information.

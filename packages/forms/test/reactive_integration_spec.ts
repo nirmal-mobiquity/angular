@@ -2664,6 +2664,34 @@ const ValueAccessorB = createControlValueAccessor('[cva-b]');
                .toEqual(2, `Expected original observable to be canceled on the next value change.`);
          }));
 
+         describe('null validation', () => {
+         it('should remove attribute minLength and maxLength if value is null', () => {
+          const control = new FormControl();
+          @Component({
+            selector: 'min-max-length-null',
+            template: `
+              <form [formGroup]="form">
+                <input formControlName="control" randomAttribute="randomValue" [minLength]="null" [maxLength]="null">
+              </form>
+            `
+          })
+          class MinMaxLengthComponent {
+            form = new FormGroup({control: new FormControl()});
+          }
+
+          const fixture = initTest(MinMaxLengthComponent);
+
+          const randomAttribute = fixture.debugElement.query(By.css('[randomAttribute]'));
+          expect(randomAttribute).toBeDefined();
+
+          const minLengthAttribute = fixture.debugElement.query(By.css('[minlength]'));
+          expect(minLengthAttribute).toBeNull();
+
+          const maxLenghtAttribute = fixture.debugElement.query(By.css('[maxlength]'));
+          expect(maxLenghtAttribute).toBeNull();
+        });
+      });
+
       describe('min and max validators', () => {
         function getComponent(dir: string): Type<MinMaxFormControlComp|MinMaxFormControlNameComp> {
           return dir === 'formControl' ? MinMaxFormControlComp : MinMaxFormControlNameComp;

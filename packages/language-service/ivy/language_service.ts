@@ -12,7 +12,7 @@ import {NgCompiler} from '@angular/compiler-cli/src/ngtsc/core';
 import {ErrorCode, ngErrorCode} from '@angular/compiler-cli/src/ngtsc/diagnostics';
 import {absoluteFrom, absoluteFromSourceFile, AbsoluteFsPath} from '@angular/compiler-cli/src/ngtsc/file_system';
 import {PerfPhase} from '@angular/compiler-cli/src/ngtsc/perf';
-import {ProgramDriver} from '@angular/compiler-cli/src/ngtsc/program_driver';
+import {FileUpdate, ProgramDriver} from '@angular/compiler-cli/src/ngtsc/program_driver';
 import {isNamedClassDeclaration} from '@angular/compiler-cli/src/ngtsc/reflection';
 import {TypeCheckShimGenerator} from '@angular/compiler-cli/src/ngtsc/typecheck';
 import {OptimizeFor} from '@angular/compiler-cli/src/ngtsc/typecheck/api';
@@ -118,7 +118,7 @@ export class LanguageService {
       if (!isInAngularContext(compiler.getCurrentProgram(), fileName, position)) {
         return undefined;
       }
-      return new DefinitionBuilder(this.tsLS, compiler)
+      return new DefinitionBuilder(this.tsLS, compiler, this.programDriver)
           .getDefinitionAndBoundSpan(fileName, position);
     });
   }
@@ -129,7 +129,7 @@ export class LanguageService {
       if (!isTemplateContext(compiler.getCurrentProgram(), fileName, position)) {
         return undefined;
       }
-      return new DefinitionBuilder(this.tsLS, compiler)
+      return new DefinitionBuilder(this.tsLS, compiler, this.programDriver)
           .getTypeDefinitionsAtPosition(fileName, position);
     });
   }
@@ -244,7 +244,8 @@ export class LanguageService {
   getCompletionEntryDetails(
       fileName: string, position: number, entryName: string,
       formatOptions: ts.FormatCodeOptions|ts.FormatCodeSettings|undefined,
-      preferences: ts.UserPreferences|undefined): ts.CompletionEntryDetails|undefined {
+      preferences: ts.UserPreferences|undefined,
+      data: ts.CompletionEntryData|undefined): ts.CompletionEntryDetails|undefined {
     return this.withCompilerAndPerfTracing(PerfPhase.LsCompletions, (compiler) => {
       if (!isTemplateContext(compiler.getCurrentProgram(), fileName, position)) {
         return undefined;
@@ -254,7 +255,7 @@ export class LanguageService {
       if (builder === null) {
         return undefined;
       }
-      return builder.getCompletionEntryDetails(entryName, formatOptions, preferences);
+      return builder.getCompletionEntryDetails(entryName, formatOptions, preferences, data);
     });
   }
 
@@ -482,8 +483,8 @@ function createProgramDriver(project: ts.server.Project): ProgramDriver {
       }
       return program;
     },
-    updateFiles(contents: Map<AbsoluteFsPath, string>) {
-      for (const [fileName, newText] of contents) {
+    updateFiles(contents: Map<AbsoluteFsPath, FileUpdate>) {
+      for (const [fileName, {newText}] of contents) {
         const scriptInfo = getOrCreateTypeCheckScriptInfo(project, fileName);
         const snapshot = scriptInfo.getSnapshot();
         const length = snapshot.getLength();

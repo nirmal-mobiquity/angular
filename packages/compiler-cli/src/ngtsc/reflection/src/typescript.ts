@@ -277,7 +277,7 @@ export class TypeScriptReflectionHost implements ReflectionHost {
       return null;
     }
     const namespaceSymbol = this.checker.getSymbolAtLocation(namespaceIdentifier);
-    if (!namespaceSymbol) {
+    if (!namespaceSymbol || namespaceSymbol.declarations === undefined) {
       return null;
     }
     const declaration =
@@ -548,6 +548,8 @@ export function reflectTypeEntityToDeclaration(
         throw new Error(`Module specifier is not a string`);
       }
       return {node, from: importDecl.moduleSpecifier.text};
+    } else if (ts.isModuleDeclaration(decl)) {
+      return {node, from: null};
     } else {
       throw new Error(`Unknown import type?`);
     }

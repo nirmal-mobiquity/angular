@@ -50,6 +50,12 @@ export enum ErrorCode {
    */
   COMPONENT_RESOURCE_NOT_FOUND = 2008,
 
+  /**
+   * Raised when a component uses `ShadowDom` view encapsulation, but its selector
+   * does not match the shadow DOM tag name requirements.
+   */
+  COMPONENT_INVALID_SHADOW_DOM_SELECTOR = 2009,
+
   SYMBOL_NOT_EXPORTED = 3001,
   SYMBOL_EXPORTED_UNDER_DIFFERENT_NAME = 3002,
   /**
@@ -161,6 +167,12 @@ export enum ErrorCode {
   DUPLICATE_VARIABLE_DECLARATION = 8006,
 
   /**
+   * A template has a two way binding (two bindings created by a single syntactial element)
+   * in which the input and output are going to different places.
+   */
+  SPLIT_TWO_WAY_BINDING = 8007,
+
+  /**
    * The template type-checking engine would need to generate an inline type check block for a
    * component, but the current type-checking environment doesn't support it.
    */
@@ -215,6 +227,7 @@ export const COMPILER_ERRORS_WITH_GUIDES = new Set([
   ErrorCode.SCHEMA_INVALID_ELEMENT,
   ErrorCode.SCHEMA_INVALID_ATTRIBUTE,
   ErrorCode.MISSING_REFERENCE_TARGET,
+  ErrorCode.COMPONENT_INVALID_SHADOW_DOM_SELECTOR,
 ]);
 
 /**

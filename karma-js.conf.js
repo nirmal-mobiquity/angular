@@ -36,8 +36,8 @@ module.exports = function(config) {
       {pattern: 'node_modules/angular-mocks-1.6/angular-mocks.js', included: false, watched: false},
       {pattern: 'node_modules/angular-1.7/angular?(.min).js', included: false, watched: false},
       {pattern: 'node_modules/angular-mocks-1.7/angular-mocks.js', included: false, watched: false},
-      {pattern: 'node_modules/angular/angular?(.min).js', included: false, watched: false},
-      {pattern: 'node_modules/angular-mocks/angular-mocks.js', included: false, watched: false},
+      {pattern: 'node_modules/angular-1.8/angular?(.min).js', included: false, watched: false},
+      {pattern: 'node_modules/angular-mocks-1.8/angular-mocks.js', included: false, watched: false},
 
       'node_modules/core-js-bundle/index.js',
       'node_modules/jasmine-ajax/lib/mock-ajax.js',
@@ -59,7 +59,6 @@ module.exports = function(config) {
         included: false,
         watched: false
       },
-      {pattern: 'node_modules/mutation-observer/index.js', included: false, watched: false},
 
       {pattern: 'node_modules/rxjs/**', included: false, watched: false, served: true},
       'node_modules/reflect-metadata/Reflect.js',

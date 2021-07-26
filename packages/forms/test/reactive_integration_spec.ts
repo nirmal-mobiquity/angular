@@ -9,7 +9,7 @@
 import {ɵgetDOM as getDOM} from '@angular/common';
 import {Component, Directive, forwardRef, Input, NgModule, OnDestroy, Type} from '@angular/core';
 import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {AbstractControl, AsyncValidator, AsyncValidatorFn, COMPOSITION_BUFFER_MODE, ControlValueAccessor, DefaultValueAccessor, FormArray, FormControl, FormControlDirective, FormControlName, FormGroup, FormGroupDirective, FormsModule, MaxValidator, MinValidator, NG_ASYNC_VALIDATORS, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validator, Validators} from '@angular/forms';
+import {AbstractControl, AsyncValidator, AsyncValidatorFn, COMPOSITION_BUFFER_MODE, ControlValueAccessor, DefaultValueAccessor, FormArray, FormControl, FormControlDirective, FormControlName, FormGroup, FormGroupDirective, FormsModule, MaxValidator, MinLengthValidator, MinValidator, NG_ASYNC_VALIDATORS, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validator, Validators} from '@angular/forms';
 import {By} from '@angular/platform-browser/src/dom/debug/by';
 import {dispatchEvent, sortedClassList} from '@angular/platform-browser/testing/src/browser_util';
 import {merge, NEVER, of, Subscription, timer} from 'rxjs';
@@ -190,7 +190,7 @@ const ValueAccessorB = createControlValueAccessor('[cva-b]');
       });
 
       it('should update nested form group model when UI changes', () => {
-        const fixture = initTest(NestedFormGroupComp);
+        const fixture = initTest(NestedFormGroupNameComp);
         fixture.componentInstance.form = new FormGroup(
             {'signin': new FormGroup({'login': new FormControl(), 'password': new FormControl()})});
         fixture.detectChanges();
@@ -242,7 +242,7 @@ const ValueAccessorB = createControlValueAccessor('[cva-b]');
       });
 
       it('should pick up dir validators from nested form groups', () => {
-        const fixture = initTest(NestedFormGroupComp, LoginIsEmptyValidator);
+        const fixture = initTest(NestedFormGroupNameComp, LoginIsEmptyValidator);
         const form = new FormGroup({
           'signin': new FormGroup({'login': new FormControl(''), 'password': new FormControl('')})
         });
@@ -260,7 +260,7 @@ const ValueAccessorB = createControlValueAccessor('[cva-b]');
       });
 
       it('should strip named controls that are not found', () => {
-        const fixture = initTest(NestedFormGroupComp, LoginIsEmptyValidator);
+        const fixture = initTest(NestedFormGroupNameComp, LoginIsEmptyValidator);
         const form = new FormGroup({
           'signin': new FormGroup({'login': new FormControl(''), 'password': new FormControl('')})
         });
@@ -335,7 +335,7 @@ const ValueAccessorB = createControlValueAccessor('[cva-b]');
         });
 
         it('should attach dirs to all child controls when group control changes', () => {
-          const fixture = initTest(NestedFormGroupComp, LoginIsEmptyValidator);
+          const fixture = initTest(NestedFormGroupNameComp, LoginIsEmptyValidator);
           const form = new FormGroup({
             signin: new FormGroup(
                 {login: new FormControl('oldLogin'), password: new FormControl('oldPassword')})
@@ -1087,6 +1087,8 @@ const ValueAccessorB = createControlValueAccessor('[cva-b]');
         fixture.detectChanges();
 
         const input = fixture.debugElement.query(By.css('input')).nativeElement;
+        const formEl = fixture.debugElement.query(By.css('form')).nativeElement;
+
         expect(sortedClassList(input)).toEqual(['ng-invalid', 'ng-pristine', 'ng-untouched']);
 
         dispatchEvent(input, 'blur');
@@ -1099,6 +1101,19 @@ const ValueAccessorB = createControlValueAccessor('[cva-b]');
         fixture.detectChanges();
 
         expect(sortedClassList(input)).toEqual(['ng-dirty', 'ng-touched', 'ng-valid']);
+        expect(sortedClassList(formEl)).not.toContain('ng-submitted');
+
+        dispatchEvent(formEl, 'submit');
+        fixture.detectChanges();
+
+        expect(sortedClassList(input)).not.toContain('ng-submitted');
+        expect(sortedClassList(formEl)).toContain('ng-submitted');
+
+        dispatchEvent(formEl, 'reset');
+        fixture.detectChanges();
+
+        expect(sortedClassList(input)).not.toContain('ng-submitted');
+        expect(sortedClassList(formEl)).not.toContain('ng-submitted');
       });
 
       it('should work with formGroup', () => {
@@ -1122,6 +1137,126 @@ const ValueAccessorB = createControlValueAccessor('[cva-b]');
         fixture.detectChanges();
 
         expect(sortedClassList(formEl)).toEqual(['ng-dirty', 'ng-touched', 'ng-valid']);
+
+        dispatchEvent(formEl, 'submit');
+        fixture.detectChanges();
+
+        expect(sortedClassList(formEl)).toContain('ng-submitted');
+
+        dispatchEvent(formEl, 'reset');
+        fixture.detectChanges();
+
+        expect(sortedClassList(input)).not.toContain('ng-submitted');
+        expect(sortedClassList(formEl)).not.toContain('ng-submitted');
+      });
+
+      it('should not assign `ng-submitted` class to elements with `formArrayName`', () => {
+        // Since element with the `formArrayName` can not represent top-level forms (can only be
+        // inside other elements), this test verifies that these elements never receive
+        // `ng-submitted` CSS class even when they are located inside submitted form.
+        const fixture = initTest(FormArrayComp);
+        const cityArray = new FormArray([new FormControl('SF'), new FormControl('NY')]);
+        const form = new FormGroup({cities: cityArray});
+        fixture.componentInstance.form = form;
+        fixture.componentInstance.cityArray = cityArray;
+        fixture.detectChanges();
+
+        const [loginInput, passwordInput] =
+            fixture.debugElement.queryAll(By.css('input')).map(el => el.nativeElement);
+        const arrEl = fixture.debugElement.query(By.css('div')).nativeElement;
+        const formEl = fixture.debugElement.query(By.css('form')).nativeElement;
+
+        expect(passwordInput).toBeDefined();
+        expect(sortedClassList(loginInput)).not.toContain('ng-submitted');
+        expect(sortedClassList(arrEl)).not.toContain('ng-submitted');
+        expect(sortedClassList(formEl)).not.toContain('ng-submitted');
+
+        dispatchEvent(formEl, 'submit');
+        fixture.detectChanges();
+
+        expect(sortedClassList(loginInput)).not.toContain('ng-submitted');
+        expect(sortedClassList(arrEl)).not.toContain('ng-submitted');
+        expect(sortedClassList(formEl)).toContain('ng-submitted');
+
+        dispatchEvent(formEl, 'reset');
+        fixture.detectChanges();
+
+        expect(sortedClassList(loginInput)).not.toContain('ng-submitted');
+        expect(sortedClassList(arrEl)).not.toContain('ng-submitted');
+        expect(sortedClassList(formEl)).not.toContain('ng-submitted');
+      });
+
+      it('should apply submitted status with nested formArrayName', () => {
+        const fixture = initTest(NestedFormArrayNameComp);
+        const ic = new FormControl('foo');
+        const arr = new FormArray([ic]);
+        const form = new FormGroup({arr});
+        fixture.componentInstance.form = form;
+        fixture.detectChanges();
+
+        const input = fixture.debugElement.query(By.css('input')).nativeElement;
+        const arrEl = fixture.debugElement.query(By.css('div')).nativeElement;
+        const formEl = fixture.debugElement.query(By.css('form')).nativeElement;
+
+        expect(sortedClassList(input)).not.toContain('ng-submitted');
+        expect(sortedClassList(arrEl)).not.toContain('ng-submitted');
+        expect(sortedClassList(formEl)).not.toContain('ng-submitted');
+
+        dispatchEvent(formEl, 'submit');
+        fixture.detectChanges();
+
+        expect(sortedClassList(input)).not.toContain('ng-submitted');
+        expect(sortedClassList(arrEl)).not.toContain('ng-submitted');
+        expect(sortedClassList(formEl)).toContain('ng-submitted');
+
+        dispatchEvent(formEl, 'reset');
+        fixture.detectChanges();
+
+        expect(sortedClassList(input)).not.toContain('ng-submitted');
+        expect(sortedClassList(arrEl)).not.toContain('ng-submitted');
+        expect(sortedClassList(formEl)).not.toContain('ng-submitted');
+      });
+
+      it('should apply submitted status with nested formGroupName', () => {
+        const fixture = initTest(NestedFormGroupNameComp);
+        const loginControl =
+            new FormControl('', {validators: Validators.required, updateOn: 'change'});
+        const passwordControl = new FormControl('', Validators.required);
+        const formGroup = new FormGroup(
+            {signin: new FormGroup({login: loginControl, password: passwordControl})},
+            {updateOn: 'blur'});
+        fixture.componentInstance.form = formGroup;
+        fixture.detectChanges();
+
+        const [loginInput, passwordInput] =
+            fixture.debugElement.queryAll(By.css('input')).map(el => el.nativeElement);
+
+        const formEl = fixture.debugElement.query(By.css('form')).nativeElement;
+        const groupEl = fixture.debugElement.query(By.css('div')).nativeElement;
+        loginInput.value = 'Nancy';
+        // Input and blur events, as in a real interaction, cause the form to be touched and
+        // dirtied.
+        dispatchEvent(loginInput, 'input');
+        dispatchEvent(loginInput, 'blur');
+        fixture.detectChanges();
+
+        expect(sortedClassList(loginInput)).not.toContain('ng-submitted');
+        expect(sortedClassList(groupEl)).not.toContain('ng-submitted');
+        expect(sortedClassList(formEl)).not.toContain('ng-submitted');
+
+        dispatchEvent(formEl, 'submit');
+        fixture.detectChanges();
+
+        expect(sortedClassList(loginInput)).not.toContain('ng-submitted');
+        expect(sortedClassList(groupEl)).not.toContain('ng-submitted');
+        expect(sortedClassList(formEl)).toContain('ng-submitted');
+
+        dispatchEvent(formEl, 'reset');
+        fixture.detectChanges();
+
+        expect(sortedClassList(loginInput)).not.toContain('ng-submitted');
+        expect(sortedClassList(groupEl)).not.toContain('ng-submitted');
+        expect(sortedClassList(formEl)).not.toContain('ng-submitted');
       });
     });
 
@@ -1501,7 +1636,7 @@ const ValueAccessorB = createControlValueAccessor('[cva-b]');
 
 
         it('should allow child control updateOn blur to override group updateOn', () => {
-          const fixture = initTest(NestedFormGroupComp);
+          const fixture = initTest(NestedFormGroupNameComp);
           const loginControl =
               new FormControl('', {validators: Validators.required, updateOn: 'change'});
           const passwordControl = new FormControl('', Validators.required);
@@ -1810,7 +1945,7 @@ const ValueAccessorB = createControlValueAccessor('[cva-b]');
           const validatorSpy = jasmine.createSpy('validator');
           const groupValidatorSpy = jasmine.createSpy('groupValidatorSpy');
 
-          const fixture = initTest(NestedFormGroupComp);
+          const fixture = initTest(NestedFormGroupNameComp);
           const formGroup = new FormGroup({
             signin: new FormGroup({login: new FormControl(), password: new FormControl()}),
             email: new FormControl('', {updateOn: 'submit'})
@@ -1907,7 +2042,7 @@ const ValueAccessorB = createControlValueAccessor('[cva-b]');
         });
 
         it('should allow child control updateOn submit to override group updateOn', () => {
-          const fixture = initTest(NestedFormGroupComp);
+          const fixture = initTest(NestedFormGroupNameComp);
           const loginControl =
               new FormControl('', {validators: Validators.required, updateOn: 'change'});
           const passwordControl = new FormControl('', Validators.required);
@@ -2528,6 +2663,97 @@ const ValueAccessorB = createControlValueAccessor('[cva-b]');
            expect(resultArr.length)
                .toEqual(2, `Expected original observable to be canceled on the next value change.`);
          }));
+
+      describe('enabling validators conditionally', () => {
+        it('should not activate minlength and maxlength validators if input is null', () => {
+          @Component({
+            selector: 'min-max-length-null',
+            template: `
+                <form [formGroup]="form">
+                  <input [formControl]="control" name="control" [minlength]="minlen" [maxlength]="maxlen">
+                </form> `
+          })
+          class MinMaxLengthComponent {
+            control: FormControl = new FormControl();
+            form: FormGroup = new FormGroup({'control': this.control});
+            minlen: number|null = null;
+            maxlen: number|null = null;
+          }
+
+          const fixture = initTest(MinMaxLengthComponent);
+          const control = fixture.componentInstance.control;
+          fixture.detectChanges();
+
+          const form = fixture.componentInstance.form;
+          const input = fixture.debugElement.query(By.css('input')).nativeElement;
+
+          interface minmax {
+            minlength: number|null;
+            maxlength: number|null;
+          }
+
+          interface state {
+            isValid: boolean;
+            failedValidator?: string;
+          }
+
+          const setInputValue = (value: number) => {
+            input.value = value;
+            dispatchEvent(input, 'input');
+            fixture.detectChanges();
+          };
+          const setValidatorValues = (values: minmax) => {
+            fixture.componentInstance.minlen = values.minlength;
+            fixture.componentInstance.maxlen = values.maxlength;
+            fixture.detectChanges();
+          };
+          const verifyValidatorAttrValues = (values: {minlength: any, maxlength: any}) => {
+            expect(input.getAttribute('minlength')).toBe(values.minlength);
+            expect(input.getAttribute('maxlength')).toBe(values.maxlength);
+          };
+          const verifyFormState = (state: state) => {
+            expect(form.valid).toBe(state.isValid);
+            if (state.failedValidator) {
+              expect(control!.hasError('minlength')).toEqual(state.failedValidator === 'minlength');
+              expect(control!.hasError('maxlength')).toEqual(state.failedValidator === 'maxlength');
+            }
+          };
+
+          ////////// Actual test scenarios start below //////////
+          // 1. Verify that validators are disabled when input is `null`.
+          setValidatorValues({minlength: null, maxlength: null});
+          verifyValidatorAttrValues({minlength: null, maxlength: null});
+          verifyFormState({isValid: true});
+
+          // 2. Verify that setting validator inputs (to a value different from `null`) activate
+          // validators.
+          setInputValue(12345);
+          setValidatorValues({minlength: 2, maxlength: 4});
+          verifyValidatorAttrValues({minlength: '2', maxlength: '4'});
+          verifyFormState({isValid: false, failedValidator: 'maxlength'});
+
+          // 3. Changing value to the valid range should make the form valid.
+          setInputValue(123);
+          verifyFormState({isValid: true});
+
+          // 4. Changing value to trigger `minlength` validator.
+          setInputValue(1);
+          verifyFormState({isValid: false, failedValidator: 'minlength'});
+
+          // 5. Changing validator inputs to verify that attribute values are updated (and the form
+          // is now valid).
+          setInputValue(1);
+          setValidatorValues({minlength: 1, maxlength: 5});
+          verifyValidatorAttrValues({minlength: '1', maxlength: '5'});
+          verifyFormState({isValid: true});
+
+          // 6. Reset validator inputs back to `null` should deactivate validators.
+          setInputValue(123);
+          setValidatorValues({minlength: null, maxlength: null});
+          verifyValidatorAttrValues({minlength: null, maxlength: null});
+          verifyFormState({isValid: true});
+        });
+      });
 
       describe('min and max validators', () => {
         function getComponent(dir: string): Type<MinMaxFormControlComp|MinMaxFormControlNameComp> {
@@ -4807,7 +5033,7 @@ class FormGroupComp {
 }
 
 @Component({
-  selector: 'nested-form-group-comp',
+  selector: 'nested-form-group-name-comp',
   template: `
     <form [formGroup]="form">
       <div formGroupName="signin" login-is-empty-validator>
@@ -4817,7 +5043,7 @@ class FormGroupComp {
       <input *ngIf="form.contains('email')" formControlName="email">
     </form>`
 })
-class NestedFormGroupComp {
+class NestedFormGroupNameComp {
   // TODO(issue/24571): remove '!'.
   form!: FormGroup;
 }
@@ -4838,6 +5064,20 @@ class FormArrayComp {
   form!: FormGroup;
   // TODO(issue/24571): remove '!'.
   cityArray!: FormArray;
+}
+
+@Component({
+  selector: 'nested-form-array-name-comp',
+  template: `
+    <form [formGroup]="form">
+      <div formArrayName="arr">
+        <input formControlName="0">
+      </div>
+    </form>
+  `
+})
+class NestedFormArrayNameComp {
+  form!: FormGroup;
 }
 
 @Component({

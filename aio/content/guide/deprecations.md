@@ -80,7 +80,7 @@ Tip: In the [API reference section](api) of this site, deprecated APIs are indic
 
 | API                                                                                           | Replacement                                         | Deprecation announced | Notes |
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------- | --------------------- | ----- |
-| [`CurrencyPipe` - `DEFAULT_CURRENCY_CODE`](api/common/CurrencyPipe#currency-code-deprecation) | `{provide: DEFAULT_CURRENCY_CODE, useValue: 'USD'}` | v9                    | From v11 the default code will be extracted from the locale data given by `LOCAL_ID`, rather than `USD`. |
+| [`CurrencyPipe` - `DEFAULT_CURRENCY_CODE`](api/common/CurrencyPipe#currency-code-deprecation) | `{provide: DEFAULT_CURRENCY_CODE, useValue: 'USD'}` | v9                    | From v11 the default code will be extracted from the locale data given by `LOCALE_ID`, rather than `USD`. |
 
 
 {@a common-http}
@@ -380,7 +380,11 @@ All of the `wtf*` APIs are deprecated and will be removed in a future version.
 
 {@a entryComponents}
 ### `entryComponents` and `ANALYZE_FOR_ENTRY_COMPONENTS` no longer required
-Previously, the `entryComponents` array in the `NgModule` definition was used to tell the compiler which components would be created and inserted dynamically. With Ivy, this isn't a requirement anymore and the `entryComponents` array can be removed from existing module declarations. The same applies to the `ANALYZE_FOR_ENTRY_COMPONENTS` injection token.
+Previously, the `entryComponents` array in the `NgModule` definition was used to tell the compiler which components would be created and inserted dynamically.
+With Ivy, this isn't a requirement anymore and the `entryComponents` array can be removed from existing module declarations.
+The same applies to the `ANALYZE_FOR_ENTRY_COMPONENTS` injection token.
+
+Note: You may still need to keep these if building a library that will be consumed by a View Engine application.
 
 {@a moduleWithProviders}
 ### `ModuleWithProviders` type without a generic
